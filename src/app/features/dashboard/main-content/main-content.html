@@ -1,1 +1,103 @@
-<p>main-content works!</p>
+<div class="dashboard">
+  <div class="dashboard-header">
+    <h1>Dashboard</h1>
+    <p>Welcome back! Here's what's happening with your projects today.</p>
+  </div>
+
+  <div class="quick-stats">
+    <div class="stat-card">
+      <div class="stat-icon">📊</div>
+      <div class="stat-content">
+        <h3>{{ quickStats.totalTasks }}</h3>
+        <p>Total Tasks</p>
+      </div>
+    </div>
+
+    <div class="stat-card completed">
+      <div class="stat-icon">✅</div>
+      <div class="stat-content">
+        <h3>{{ quickStats.completedTasks }}</h3>
+        <p>Completed</p>
+      </div>
+    </div>
+
+    <div class="stat-card in-progress">
+      <div class="stat-icon">⚡</div>
+      <div class="stat-content">
+        <h3>{{ quickStats.inProgressTasks }}</h3>
+        <p>In Progress</p>
+      </div>
+    </div>
+
+    <div class="stat-card overdue">
+      <div class="stat-icon">⚠️</div>
+      <div class="stat-content">
+        <h3>{{ quickStats.overdueeTasks }}</h3>
+        <p>Overdue</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="dashboard-content">
+    <div class="quick-actions">
+      <h2>Quick Actions</h2>
+      <div class="action-grid">
+        <a routerLink="/tasks" class="action-card">
+          <div class="action-icon">✅</div>
+          <h3>View All Tasks</h3>
+          <p>Manage and track your tasks</p>
+        </a>
+
+        <a routerLink="/projects" class="action-card">
+          <div class="action-icon">📁</div>
+          <h3>Browse Projects</h3>
+          <p>Explore your project portfolio</p>
+        </a>
+
+        <button
+          class="action-card action-button"
+          (click)="createNewTask()"
+          (keydown.enter)="createNewTask()"
+          (keydown.space)="createNewTask()"
+          type="button"
+          aria-label="Create a new task"
+        >
+          <div class="action-icon">➕</div>
+          <h3>Create New Task</h3>
+          <p>Add a new task to your board</p>
+        </button>
+
+        <button
+          class="action-card action-button"
+          (click)="generateReport()"
+          (keydown.enter)="generateReport()"
+          (keydown.space)="generateReport()"
+          type="button"
+          aria-label="Generate productivity report"
+        >
+          <div class="action-icon">📈</div>
+          <h3>Generate Report</h3>
+          <p>View productivity insights</p>
+        </button>
+      </div>
+    </div>
+
+    <div class="recent-activity">
+      <h2>Recent Activity</h2>
+      <div class="activity-list">
+        @for (activity of recentActivities; track activity.id) {
+          <div class="activity-item">
+            <div class="activity-content">
+              <h4>{{ activity.action }}</h4>
+              <p>{{ activity.description }}</p>
+              <div class="activity-meta">
+                <span class="activity-user">{{ activity.user }}</span>
+                <span class="activity-time">{{ activity.time }}</span>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+</div>

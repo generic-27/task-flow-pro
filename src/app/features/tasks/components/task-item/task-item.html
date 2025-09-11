@@ -1,0 +1,59 @@
+<div
+  class="task-item"
+  [class.completed]="task().status === taskStatus.DONE"
+  [attr.data-priority]="task().priority"
+>
+  <div class="task-header">
+    <div class="task-title">
+      <h3>{{ task().title }}</h3>
+      <div class="task-meta">
+        <span class="task-id">#{{ taskIdShort() }}</span>
+        <span class="task-priority" [class]="'priority-' + task().priority">
+          {{ priorityLabel() }}
+        </span>
+      </div>
+    </div>
+
+    <div class="task-actions">
+      <button class="btn-icon" (click)="onEdit()" title="Edit task">✏️</button>
+      <button class="btn-icon" (click)="onDelete()" title="Delete task">🗑️</button>
+    </div>
+  </div>
+
+  <div class="task-content">
+    @if (task().description) {
+      <p class="task-description">{{ task().description }}</p>
+    }
+
+    @if (task().tags.length > 0) {
+      <div class="task-tags">
+        @for (tag of task().tags; track tag) {
+          <span class="tag">{{ tag }}</span>
+        }
+      </div>
+    }
+  </div>
+
+  <div class="task-footer">
+    <div class="task-assignee">
+      @if (task().assignee) {
+        <app-user-avatar [user]="task().assignee" size="small"> </app-user-avatar>
+        <span class="assignee-name">{{ task().assignee.name }}</span>
+      } @else {
+        <span class="unassigned">Unassigned</span>
+      }
+    </div>
+
+    <div class="task-status">
+      <select [value]="task().status" (change)="onStatusChange($event)" class="status-select">
+        @for (status of statusOptions; track status.value) {
+          <option [value]="status.value">{{ status.label }}</option>
+        }
+      </select>
+    </div>
+
+    @if (task().dueDate) {
+      <div class="task-due-date" [class.overdue]="isOverdue()">📅 {{ formattedDueDate() }}</div>
+    }
+  </div>
+</div>

@@ -1,0 +1,15 @@
+<div
+  class="user-avatar"
+  [class.small]="size() === 'small'"
+  [class.medium]="size() === 'medium'"
+  [class.large]="size() === 'large'"
+  [title]="user()?.name || 'Unknown User'"
+>
+  @if (user()?.avatar) {
+    <img [src]="user()!.avatar" [alt]="user()!.name" class="avatar-image" />
+  } @else {
+    <div class="avatar-initials">
+      {{ initials() }}
+    </div>
+  }
+</div>

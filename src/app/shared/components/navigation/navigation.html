@@ -1,0 +1,52 @@
+<nav class="navigation">
+  <div class="nav-container">
+    <div class="nav-brand">
+      <h1>TaskFlow Pro</h1>
+    </div>
+
+    <div class="nav-links">
+      <a
+        routerLink="/"
+        routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: true }"
+        class="nav-link"
+      >
+        📊 Dashboard
+      </a>
+
+      <a routerLink="/tasks" routerLinkActive="active" class="nav-link"> ✅ Tasks </a>
+
+      <a routerLink="/projects" routerLinkActive="active" class="nav-link"> 📁 Projects </a>
+    </div>
+
+    <div class="nav-user">
+      <div class="user-info">
+        <app-user-avatar [user]="currentUser()" size="small"> </app-user-avatar>
+        <div class="user-details">
+          <span class="user-name">{{ currentUser().name }}</span>
+          <span class="user-role">{{ formattedRole() }}</span>
+        </div>
+      </div>
+
+      <div class="user-menu">
+        <button
+          class="menu-button"
+          (click)="toggleUserMenu()"
+          [attr.aria-expanded]="showUserMenu()"
+          aria-label="User menu"
+        >
+          ⚙️
+        </button>
+
+        @if (showUserMenu()) {
+          <div class="dropdown-menu" role="menu">
+            <a href="#" class="menu-item" role="menuitem">Profile</a>
+            <a href="#" class="menu-item" role="menuitem">Settings</a>
+            <hr class="menu-divider" />
+            <a href="#" class="menu-item logout" role="menuitem">Logout</a>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+</nav>

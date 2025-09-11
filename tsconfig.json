@@ -3,7 +3,7 @@
 {
   "compileOnSave": false,
   "compilerOptions": {
-    "baseUrl": "src/*",
+    "baseUrl": "./src",
     "strict": true,
     "noImplicitOverride": true,
     "noPropertyAccessFromIndexSignature": true,
@@ -12,6 +12,7 @@
     "skipLibCheck": true,
     "isolatedModules": true,
     "experimentalDecorators": true,
+    "sourceMap": true,
     "importHelpers": true,
     "target": "ES2022",
     "module": "preserve",
@@ -19,7 +20,8 @@
       "@app/*": ["app/*"],
       "@core/*": ["app/core/*"],
       "@shared/*": ["app/shared/*"],
-      "@features/*": ["app/features/*"]
+      "@features/*": ["app/features/*"],
+      "@environments/*": ["environments/*"]
     }
   },
   "angularCompilerOptions": {

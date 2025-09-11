@@ -1,0 +1,91 @@
+<div class="task-list-container">
+  <div class="task-list-header">
+    <h2>Tasks</h2>
+
+    <div class="task-filters">
+      <div class="filter-group">
+        <label for="status-filter">Status:</label>
+        <select
+          id="status-filter"
+          [value]="selectedStatus()"
+          (change)="onStatusFilterChange($event)"
+          class="filter-select"
+        >
+          <option value="">All Statuses</option>
+          @for (status of statusOptions; track status.value) {
+            <option [value]="status.value">{{ status.label }}</option>
+          }
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label for="priority-filter">Priority:</label>
+        <select
+          id="priority-filter"
+          [value]="selectedPriority()"
+          (change)="onPriorityFilterChange($event)"
+          class="filter-select"
+        >
+          <option value="">All Priorities</option>
+          @for (priority of priorityOptions; track priority.value) {
+            <option [value]="priority.value">{{ priority.label }}</option>
+          }
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <input
+          type="text"
+          placeholder="Search tasks..."
+          [value]="searchTerm()"
+          (input)="onSearchChange($event)"
+          class="search-input"
+        />
+      </div>
+    </div>
+  </div>
+
+  @if (loading()) {
+    <app-loading-spinner size="large" message="Loading tasks..."> </app-loading-spinner>
+  } @else {
+    <div class="task-list">
+      @if (filteredTasks().length > 0) {
+        @for (task of filteredTasks(); track task.id) {
+          <app-task-item
+            [task]="task"
+            (statusChange)="onTaskStatusChange($event)"
+            (edit)="onEditTask($event)"
+            (delete)="onDeleteTask($event)"
+          ></app-task-item>
+        }
+      } @else {
+        <div class="empty-state">
+          <div class="empty-icon">📋</div>
+          <h3>No tasks found</h3>
+          <p>{{ emptyStateMessage() }}</p>
+        </div>
+      }
+    </div>
+  }
+
+  <div class="task-summary">
+    <div class="summary-stats">
+      <div class="stat">
+        <span class="stat-number">{{ taskStats().total }}</span>
+        <span class="stat-label">Total</span>
+      </div>
+      <div class="stat">
+        <span class="stat-number">{{ taskStats().completed }}</span>
+        <span class="stat-label">Completed</span>
+      </div>
+      <div class="stat">
+        <span class="stat-number">{{ taskStats().inProgress }}</span>
+        <span class="stat-label">In Progress</span>
+      </div>
+      <div class="stat">
+        <span class="stat-number">{{ taskStats().overdue }}</span>
+        <span class="stat-label">Overdue</span>
+      </div>
+    </div>
+  </div>
+</div>

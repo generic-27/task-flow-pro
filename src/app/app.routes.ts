@@ -1,12 +1,28 @@
 import { Routes } from '@angular/router';
-import {MainContent} from './features/dashboard/main-content/main-content';
-import {UserProfile} from './features/projects/user-profile/user-profile';
 
 export const routes: Routes = [
   {
-    path: '/', component: MainContent,
+    path: '',
+    redirectTo: '/dashboard',
+    pathMatch: 'full',
   },
   {
-    path: 'user-profile', component: UserProfile,
-  }
+    path: 'dashboard',
+    loadComponent: () =>
+      import('./features/dashboard/main-content/main-content').then((c) => c.MainContent),
+  },
+  {
+    path: 'tasks',
+    loadComponent: () =>
+      import('./features/tasks/components/task-list/task-list').then((c) => c.TaskList),
+  },
+  {
+    path: 'projects',
+    loadComponent: () =>
+      import('./features/projects/user-profile/user-profile').then((c) => c.UserProfile),
+  },
+  {
+    path: '**',
+    redirectTo: '/dashboard',
+  },
 ];
