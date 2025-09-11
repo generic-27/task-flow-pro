@@ -57,9 +57,7 @@
               "outputHashing": "all",
               "sourceMap": false,
               "namedChunks": false,
-              "extractLicenses": true,
-              "vendorChunk": false,
-              "buildOptimizer": true
+              "extractLicenses": true
             },
             "staging": {
               "fileReplacements": [
@@ -73,8 +71,6 @@
               "sourceMap": true,
               "namedChunks": false,
               "extractLicenses": true,
-              "vendorChunk": false,
-              "buildOptimizer": true,
               "budgets": [
                 {
                   "type": "initial",
@@ -93,9 +89,7 @@
               "optimization": false,
               "outputHashing": "media",
               "sourceMap": true,
-              "extractLicenses": false,
-              "vendorChunk": true,
-              "buildOptimizer": false
+              "extractLicenses": false
             },
             "development": {
               "optimization": false,
@@ -110,6 +104,12 @@
           "configurations": {
             "production": {
               "buildTarget": "task-flow-pro:build:production"
+            },
+            "staging": {
+              "buildTarget": "task-flow-pro:build:staging"
+            },
+            "test": {
+              "buildTarget": "task-flow-pro:build:test"
             },
             "development": {
               "buildTarget": "task-flow-pro:build:development"
