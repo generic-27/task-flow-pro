@@ -6,16 +6,16 @@
   margin-bottom: 12px;
   transition: all 0.2s ease;
   cursor: pointer;
-}
 
-.task-item:hover {
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  border-color: #c1c7cd;
-}
+  &:hover {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border-color: #c1c7cd;
+  }
 
-.task-item.completed {
-  opacity: 0.7;
-  background: #f8f9fa;
+  &.completed {
+    opacity: 0.7;
+    background: #f8f9fa;
+  }
 }
 
 .task-header {
@@ -25,11 +25,13 @@
   margin-bottom: 12px;
 }
 
-.task-title h3 {
-  margin: 0 0 4px 0;
-  font-size: 16px;
-  font-weight: 600;
-  color: #2c3e50;
+.task-title {
+  h3 {
+    margin: 0 0 4px 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: #2c3e50;
+  }
 }
 
 .task-meta {
@@ -50,23 +52,26 @@
   border-radius: 12px;
   font-weight: 600;
   text-transform: uppercase;
-}
 
-.priority-low {
-  background: #d1ecf1;
-  color: #0c5460;
-}
-.priority-medium {
-  background: #fff3cd;
-  color: #856404;
-}
-.priority-high {
-  background: #f8d7da;
-  color: #721c24;
-}
-.priority-urgent {
-  background: #dc3545;
-  color: white;
+  &.priority-low {
+    background: #d1ecf1;
+    color: #0c5460;
+  }
+
+  &.priority-medium {
+    background: #fff3cd;
+    color: #856404;
+  }
+
+  &.priority-high {
+    background: #f8d7da;
+    color: #721c24;
+  }
+
+  &.priority-urgent {
+    background: #dc3545;
+    color: white;
+  }
 }
 
 .task-actions {
@@ -81,10 +86,15 @@
   cursor: pointer;
   border-radius: 4px;
   transition: background-color 0.2s;
-}
 
-.btn-icon:hover {
-  background: #f8f9fa;
+  &:hover {
+    background: #f8f9fa;
+  }
+
+  &:focus {
+    outline: 2px solid #3498db;
+    outline-offset: 1px;
+  }
 }
 
 .task-description {
@@ -137,13 +147,19 @@
   border-radius: 4px;
   font-size: 12px;
   background: white;
+
+  &:focus {
+    outline: 2px solid #3498db;
+    outline-offset: 1px;
+    border-color: #3498db;
+  }
 }
 
 .task-due-date {
   font-weight: 500;
-}
 
-.task-due-date.overdue {
-  color: #dc3545;
-  font-weight: 600;
+  &.overdue {
+    color: #dc3545;
+    font-weight: 600;
+  }
 }

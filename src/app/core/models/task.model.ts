@@ -13,7 +13,7 @@ export interface Task {
   status: TaskStatus;
   priority: TaskPriority;
   assigneeId?: string;
-  assignee?: User;
+  assignee?: User | null; // Changed from User to User | null for consistency
   projectId: string;
   createdAt: Date;
   updatedAt: Date;

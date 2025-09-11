@@ -1,19 +1,27 @@
-import { Component, computed, input, output } from '@angular/core';
+import { Component, input, output, ChangeDetectionStrategy, computed } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { Task, TaskPriority, TaskStatus } from '@core/models/task.model';
-import { UserAvatar } from '@app/shared';
+import { UserAvatar } from '@shared/components/user-avatar/user-avatar';
 
 @Component({
   selector: 'app-task-item',
-  imports: [UserAvatar],
+  standalone: true,
+  imports: [CommonModule, UserAvatar],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './task-item.html',
   styleUrl: './task-item.scss',
 })
 export class TaskItem {
+  // Modern Angular signal-based inputs and outputs
   task = input.required<Task>();
 
+  // Signal-based outputs
   statusChange = output<{ taskId: string; status: TaskStatus }>();
   edit = output<string>();
   delete = output<string>();
+
+  // Computed signal for assignee (handles null/undefined safely)
+  assignee = computed(() => this.task().assignee || null);
 
   // Constants
   readonly taskStatus = TaskStatus;
@@ -25,35 +33,6 @@ export class TaskItem {
     { value: TaskStatus.DONE, label: 'Done' },
   ];
 
-  // Computed signals for derived values
-  taskIdShort = computed(() => this.task().id.substring(0, 8));
-
-  priorityLabel = computed(() => {
-    switch (this.task().priority) {
-      case TaskPriority.LOW:
-        return 'Low';
-      case TaskPriority.MEDIUM:
-        return 'Med';
-      case TaskPriority.HIGH:
-        return 'High';
-      case TaskPriority.URGENT:
-        return 'Urgent';
-      default:
-        return '';
-    }
-  });
-
-  formattedDueDate = computed(() => {
-    const dueDate = this.task().dueDate;
-    if (!dueDate) return '';
-
-    return new Date(dueDate).toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-    });
-  });
-
-  // Event handlers
   onStatusChange(event: Event): void {
     const select = event.target as HTMLSelectElement;
     const newStatus = select.value as TaskStatus;
@@ -68,9 +47,31 @@ export class TaskItem {
     this.delete.emit(this.task().id);
   }
 
+  getPriorityLabel(priority: TaskPriority): string {
+    switch (priority) {
+      case TaskPriority.LOW:
+        return 'Low';
+      case TaskPriority.MEDIUM:
+        return 'Med';
+      case TaskPriority.HIGH:
+        return 'High';
+      case TaskPriority.URGENT:
+        return 'Urgent';
+      default:
+        return '';
+    }
+  }
+
   isOverdue(): boolean {
-    const currentTask = this.task();
-    if (!currentTask.dueDate) return false;
-    return new Date(currentTask.dueDate) < new Date() && currentTask.status !== TaskStatus.DONE;
+    const dueDate = this.task().dueDate;
+    if (!dueDate) return false;
+    return new Date(dueDate) < new Date() && this.task().status !== TaskStatus.DONE;
+  }
+
+  formatDate(date: Date): string {
+    return new Date(date).toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+    });
   }
 }
