@@ -4,7 +4,12 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
+    "start:staging": "ng serve --configuration=staging",
+    "start:prod": "ng serve --configuration=production",
     "build": "ng build",
+    "build:staging": "ng build --configuration=staging",
+    "build:prod" : "ng build --configuration=prod",
+    "build:test": "ng build --configuration=test",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "format": "prettier --write \"src/**/*.{ts,html,scss,css,json}\"",
