@@ -1,12 +1,13 @@
 import { Component, input, output, ChangeDetectionStrategy, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms'; // ← Add FormsModule for ngModel
 import { Task, TaskPriority, TaskStatus } from '@core/models/task.model';
 import { UserAvatar } from '@shared/components/user-avatar/user-avatar';
 
 @Component({
   selector: 'app-task-item',
   standalone: true,
-  imports: [CommonModule, UserAvatar],
+  imports: [CommonModule, FormsModule, UserAvatar], // ← Add FormsModule
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './task-item.html',
   styleUrl: './task-item.scss',
@@ -46,9 +47,9 @@ export class TaskItem {
     { value: TaskStatus.DONE, label: 'Done' },
   ];
 
-  onStatusChange(event: Event): void {
-    const select = event.target as HTMLSelectElement;
-    const newStatus = select.value as TaskStatus;
+  // ✅ FIXED: Handle ngModelChange instead of change event
+  onStatusChange(newStatus: TaskStatus): void {
+    console.log('🔄 Status changing from', this.task().status, 'to', newStatus);
     this.statusChange.emit({ taskId: this.task().id, status: newStatus });
   }
 

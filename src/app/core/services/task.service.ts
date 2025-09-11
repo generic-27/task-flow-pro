@@ -120,8 +120,127 @@ export class TaskService {
     return 'task-' + Math.random().toString(36).substr(2, 9);
   }
 
+  // private generateMockTasks(): Task[] {
+  //   console.log('TaskService: Generating mock tasks...');
+  //
+  //   const mockUsers: User[] = [
+  //     {
+  //       id: '1',
+  //       name: 'John Doe',
+  //       email: 'john@example.com',
+  //       role: UserRole.DEVELOPER,
+  //     },
+  //     {
+  //       id: '2',
+  //       name: 'Jane Smith',
+  //       email: 'jane@example.com',
+  //       role: UserRole.DEVELOPER,
+  //     },
+  //   ];
+  //
+  //   const tasks = [
+  //     {
+  //       id: 'task-001',
+  //       title: 'Implement user authentication',
+  //       description: 'Set up JWT-based authentication system with login and registration',
+  //       status: TaskStatus.IN_PROGRESS,
+  //       priority: TaskPriority.HIGH,
+  //       assigneeId: '1',
+  //       assignee: mockUsers[0],
+  //       projectId: 'project-1',
+  //       createdAt: new Date('2024-01-15'),
+  //       updatedAt: new Date('2024-01-20'),
+  //       dueDate: new Date('2024-02-01'),
+  //       tags: ['authentication', 'security', 'backend'],
+  //       estimatedHours: 16,
+  //       actualHours: 12,
+  //     },
+  //     {
+  //       id: 'task-002',
+  //       title: 'Design task board component',
+  //       description: 'Create responsive kanban board with drag & drop functionality',
+  //       status: TaskStatus.TODO,
+  //       priority: TaskPriority.MEDIUM,
+  //       assigneeId: '2',
+  //       assignee: mockUsers[1],
+  //       projectId: 'project-1',
+  //       createdAt: new Date('2024-01-16'),
+  //       updatedAt: new Date('2024-01-16'),
+  //       dueDate: new Date('2024-01-30'),
+  //       tags: ['ui', 'frontend', 'angular'],
+  //       estimatedHours: 8,
+  //     },
+  //     {
+  //       id: 'task-003',
+  //       title: 'Set up CI/CD pipeline',
+  //       description: 'Configure GitHub Actions for automated testing and deployment',
+  //       status: TaskStatus.DONE,
+  //       priority: TaskPriority.LOW,
+  //       assigneeId: '1',
+  //       assignee: mockUsers[0],
+  //       projectId: 'project-1',
+  //       createdAt: new Date('2024-01-10'),
+  //       updatedAt: new Date('2024-01-18'),
+  //       dueDate: new Date('2024-01-25'),
+  //       tags: ['devops', 'automation'],
+  //       estimatedHours: 6,
+  //       actualHours: 8,
+  //     },
+  //     {
+  //       id: 'task-004',
+  //       title: 'Database schema optimization',
+  //       description: 'Optimize database queries and add proper indexing',
+  //       status: TaskStatus.IN_REVIEW,
+  //       priority: TaskPriority.URGENT,
+  //       assignee: null,
+  //       projectId: 'project-1',
+  //       createdAt: new Date('2024-01-18'),
+  //       updatedAt: new Date('2024-01-19'),
+  //       dueDate: new Date('2024-01-22'),
+  //       tags: ['database', 'performance'],
+  //       estimatedHours: 12,
+  //     },
+  //     {
+  //       id: 'task-005',
+  //       title: 'Mobile responsive design',
+  //       description: 'Ensure all components work well on mobile devices',
+  //       status: TaskStatus.TODO,
+  //       priority: TaskPriority.MEDIUM,
+  //       assigneeId: '2',
+  //       assignee: mockUsers[1],
+  //       projectId: 'project-1',
+  //       createdAt: new Date('2024-01-19'),
+  //       updatedAt: new Date('2024-01-19'),
+  //       dueDate: new Date('2024-02-05'),
+  //       tags: ['mobile', 'responsive', 'css'],
+  //       estimatedHours: 10,
+  //     },
+  //     {
+  //       id: 'task-006',
+  //       title: 'Security vulnerability assessment',
+  //       description: 'Conduct thorough security audit and fix vulnerabilities',
+  //       status: TaskStatus.TODO,
+  //       priority: TaskPriority.URGENT,
+  //       assigneeId: '1',
+  //       assignee: mockUsers[0],
+  //       projectId: 'project-1',
+  //       createdAt: new Date('2024-01-20'),
+  //       updatedAt: new Date('2024-01-20'),
+  //       dueDate: new Date('2024-01-28'),
+  //       tags: ['security', 'audit', 'urgent'],
+  //       estimatedHours: 20,
+  //     },
+  //   ];
+  //
+  //   console.log('TaskService: Generated', tasks.length, 'mock tasks');
+  //   return tasks;
+  // }
+
+  // Add this enhanced debugging to your TaskService.generateMockTasks():
+
   private generateMockTasks(): Task[] {
-    console.log('TaskService: Generating mock tasks...');
+    console.log('🔧 TaskService: Generating mock tasks...');
+    console.log('🔧 TaskStatus enum values:', TaskStatus);
 
     const mockUsers: User[] = [
       {
@@ -143,7 +262,7 @@ export class TaskService {
         id: 'task-001',
         title: 'Implement user authentication',
         description: 'Set up JWT-based authentication system with login and registration',
-        status: TaskStatus.IN_PROGRESS,
+        status: TaskStatus.IN_PROGRESS, // Should be 'in-progress'
         priority: TaskPriority.HIGH,
         assigneeId: '1',
         assignee: mockUsers[0],
@@ -159,7 +278,7 @@ export class TaskService {
         id: 'task-002',
         title: 'Design task board component',
         description: 'Create responsive kanban board with drag & drop functionality',
-        status: TaskStatus.TODO,
+        status: TaskStatus.TODO, // Should be 'todo'
         priority: TaskPriority.MEDIUM,
         assigneeId: '2',
         assignee: mockUsers[1],
@@ -174,7 +293,7 @@ export class TaskService {
         id: 'task-003',
         title: 'Set up CI/CD pipeline',
         description: 'Configure GitHub Actions for automated testing and deployment',
-        status: TaskStatus.DONE,
+        status: TaskStatus.DONE, // Should be 'done'
         priority: TaskPriority.LOW,
         assigneeId: '1',
         assignee: mockUsers[0],
@@ -190,7 +309,7 @@ export class TaskService {
         id: 'task-004',
         title: 'Database schema optimization',
         description: 'Optimize database queries and add proper indexing',
-        status: TaskStatus.IN_REVIEW,
+        status: TaskStatus.IN_REVIEW, // Should be 'in-review'
         priority: TaskPriority.URGENT,
         assignee: null,
         projectId: 'project-1',
@@ -200,39 +319,28 @@ export class TaskService {
         tags: ['database', 'performance'],
         estimatedHours: 12,
       },
-      {
-        id: 'task-005',
-        title: 'Mobile responsive design',
-        description: 'Ensure all components work well on mobile devices',
-        status: TaskStatus.TODO,
-        priority: TaskPriority.MEDIUM,
-        assigneeId: '2',
-        assignee: mockUsers[1],
-        projectId: 'project-1',
-        createdAt: new Date('2024-01-19'),
-        updatedAt: new Date('2024-01-19'),
-        dueDate: new Date('2024-02-05'),
-        tags: ['mobile', 'responsive', 'css'],
-        estimatedHours: 10,
-      },
-      {
-        id: 'task-006',
-        title: 'Security vulnerability assessment',
-        description: 'Conduct thorough security audit and fix vulnerabilities',
-        status: TaskStatus.TODO,
-        priority: TaskPriority.URGENT,
-        assigneeId: '1',
-        assignee: mockUsers[0],
-        projectId: 'project-1',
-        createdAt: new Date('2024-01-20'),
-        updatedAt: new Date('2024-01-20'),
-        dueDate: new Date('2024-01-28'),
-        tags: ['security', 'audit', 'urgent'],
-        estimatedHours: 20,
-      },
     ];
 
-    console.log('TaskService: Generated', tasks.length, 'mock tasks');
+    // 🔍 ENHANCED DEBUG: Log detailed task information
+    console.log('📊 Generated tasks with detailed status info:');
+    tasks.forEach((task, index) => {
+      console.log(`${index + 1}. "${task.title}"`);
+      console.log(`   Status: "${task.status}" (type: ${typeof task.status})`);
+      console.log(`   Priority: "${task.priority}" (type: ${typeof task.priority})`);
+      console.log(`   Status === TaskStatus.TODO: ${task.status === TaskStatus.TODO}`);
+      console.log(
+        `   Status === TaskStatus.IN_PROGRESS: ${task.status === TaskStatus.IN_PROGRESS}`,
+      );
+      console.log(`   Status === TaskStatus.IN_REVIEW: ${task.status === TaskStatus.IN_REVIEW}`);
+      console.log(`   Status === TaskStatus.DONE: ${task.status === TaskStatus.DONE}`);
+      console.log('   ---');
+    });
+
+    console.log('🔧 TaskStatus.TODO value:', TaskStatus.TODO);
+    console.log('🔧 TaskStatus.IN_PROGRESS value:', TaskStatus.IN_PROGRESS);
+    console.log('🔧 TaskStatus.IN_REVIEW value:', TaskStatus.IN_REVIEW);
+    console.log('🔧 TaskStatus.DONE value:', TaskStatus.DONE);
+
     return tasks;
   }
 }
