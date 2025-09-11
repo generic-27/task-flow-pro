@@ -20,8 +20,21 @@ export class TaskItem {
   edit = output<string>();
   delete = output<string>();
 
-  // Computed signal for assignee (handles null/undefined safely)
+  // Computed signals for safe data access
   assignee = computed(() => this.task().assignee || null);
+
+  // Computed signal for formatted due date
+  formattedDueDate = computed(() => {
+    const dueDate = this.task().dueDate;
+    return dueDate ? this.formatDate(dueDate) : null;
+  });
+
+  // Computed signal for overdue status
+  isTaskOverdue = computed(() => {
+    const dueDate = this.task().dueDate;
+    if (!dueDate) return false;
+    return new Date(dueDate) < new Date() && this.task().status !== TaskStatus.DONE;
+  });
 
   // Constants
   readonly taskStatus = TaskStatus;
@@ -62,13 +75,7 @@ export class TaskItem {
     }
   }
 
-  isOverdue(): boolean {
-    const dueDate = this.task().dueDate;
-    if (!dueDate) return false;
-    return new Date(dueDate) < new Date() && this.task().status !== TaskStatus.DONE;
-  }
-
-  formatDate(date: Date): string {
+  private formatDate(date: Date): string {
     return new Date(date).toLocaleDateString('en-US', {
       month: 'short',
       day: 'numeric',

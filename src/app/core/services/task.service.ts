@@ -1,17 +1,14 @@
 import { Task, TaskPriority, TaskStatus, User, UserRole } from '../models/task.model';
 import { Injectable } from '@angular/core';
+import { delay, Observable, of } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
 export class TaskService {
-  getTasks() {
+  getTasks(): Observable<Task[]> {
     // Simulate API delay
-    return new Promise<Task[]>((resolve) => {
-      setTimeout(() => {
-        resolve(this.generateMockTasks());
-      }, 1000);
-    });
+    return of(this.generateMockTasks()).pipe(delay(1000));
   }
 
   updateTaskStatus(taskId: string, status: TaskStatus) {

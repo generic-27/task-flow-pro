@@ -14,7 +14,7 @@ export class MainContent {
     totalTasks: 156,
     completedTasks: 89,
     inProgressTasks: 34,
-    overdueeTasks: 12,
+    overdueTasks: 12,
   };
 
   recentActivities = [

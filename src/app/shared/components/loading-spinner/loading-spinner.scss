@@ -4,16 +4,23 @@
   align-items: center;
   justify-content: center;
   gap: 12px;
-}
+  padding: 20px;
 
-.overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(255, 255, 255, 0.8);
-  z-index: 1000;
+  &.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.9);
+    z-index: 1000;
+    backdrop-filter: blur(2px);
+  }
+
+  &.inline {
+    position: relative;
+    min-height: 100px;
+  }
 }
 
 .spinner {
@@ -21,36 +28,161 @@
   border: 3px solid #f3f3f3;
   border-top: 3px solid #3498db;
   animation: spin 1s linear infinite;
-}
+  position: relative;
 
-.small {
-  width: 20px;
-  height: 20px;
-  border-width: 2px;
-}
+  &.small {
+    width: 20px;
+    height: 20px;
+    border-width: 2px;
+  }
 
-.medium {
-  width: 40px;
-  height: 40px;
-}
+  &.medium {
+    width: 40px;
+    height: 40px;
+    border-width: 3px;
+  }
 
-.large {
-  width: 60px;
-  height: 60px;
-  border-width: 4px;
+  &.large {
+    width: 60px;
+    height: 60px;
+    border-width: 4px;
+  }
+
+  // Alternative spinner styles
+  &.dots {
+    border: none;
+    width: 40px;
+    height: 10px;
+    background: linear-gradient(
+      90deg,
+      #3498db 0%,
+      #3498db 33%,
+      transparent 33%,
+      transparent 66%,
+      #3498db 66%
+    );
+    background-size: 20px 100%;
+    animation: dots 1.5s infinite;
+  }
+
+  &.pulse {
+    border: none;
+    background: #3498db;
+    animation: pulse 2s infinite;
+  }
+
+  // Different color themes
+  &.theme-primary {
+    border-top-color: #3498db;
+  }
+
+  &.theme-success {
+    border-top-color: #27ae60;
+  }
+
+  &.theme-warning {
+    border-top-color: #f39c12;
+  }
+
+  &.theme-danger {
+    border-top-color: #e74c3c;
+  }
 }
 
 .loading-message {
   margin: 0;
   color: #666;
   font-size: 14px;
+  text-align: center;
+  font-weight: 500;
+
+  &.small {
+    font-size: 12px;
+  }
+
+  &.large {
+    font-size: 16px;
+  }
 }
 
+.loading-progress {
+  width: 200px;
+  height: 4px;
+  background: #f3f3f3;
+  border-radius: 2px;
+  overflow: hidden;
+
+  .progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, #3498db, #2980b9);
+    border-radius: 2px;
+    animation: progress 2s ease-in-out infinite;
+  }
+}
+
+// Animations
 @keyframes spin {
   0% {
     transform: rotate(0deg);
   }
   100% {
     transform: rotate(360deg);
+  }
+}
+
+@keyframes dots {
+  0%,
+  20% {
+    background-position: 0% 0%;
+  }
+  40% {
+    background-position: -20px 0%;
+  }
+  60% {
+    background-position: -40px 0%;
+  }
+  80%,
+  100% {
+    background-position: -60px 0%;
+  }
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 0.7;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes progress {
+  0% {
+    transform: translateX(-100%);
+  }
+  50% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+// Accessibility
+@media (prefers-reduced-motion: reduce) {
+  .spinner,
+  .loading-progress .progress-bar {
+    animation: none;
+  }
+
+  .spinner {
+    border-top-color: transparent;
+    border-right-color: #3498db;
   }
 }

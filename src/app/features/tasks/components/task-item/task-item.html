@@ -60,9 +60,7 @@
     </div>
 
     @if (task().dueDate) {
-      <div class="task-due-date" [class.overdue]="isOverdue()">
-        📅 {{ formatDate(task().dueDate) }}
-      </div>
+      <div class="task-due-date" [class.overdue]="isTaskOverdue()">📅 {{ formattedDueDate() }}</div>
     }
   </div>
 </div>

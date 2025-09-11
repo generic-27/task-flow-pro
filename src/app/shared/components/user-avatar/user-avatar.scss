@@ -8,41 +8,125 @@
   font-weight: 600;
   overflow: hidden;
   transition: transform 0.2s ease;
+  position: relative;
+
+  &:hover {
+    transform: scale(1.05);
+  }
+
+  &.small {
+    width: 24px;
+    height: 24px;
+    font-size: 10px;
+  }
+
+  &.medium {
+    width: 32px;
+    height: 32px;
+    font-size: 12px;
+  }
+
+  &.large {
+    width: 48px;
+    height: 48px;
+    font-size: 16px;
+  }
+
+  &.extra-large {
+    width: 64px;
+    height: 64px;
+    font-size: 20px;
+  }
+
+  .avatar-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+  }
+
+  .avatar-initials {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+
+  // Status indicator for online/offline
+  .avatar-status {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 25%;
+    height: 25%;
+    border-radius: 50%;
+    border: 2px solid white;
+
+    &.online {
+      background: #28a745;
+    }
+
+    &.away {
+      background: #ffc107;
+    }
+
+    &.offline {
+      background: #6c757d;
+    }
+  }
+
+  // Different color schemes
+  &.scheme-blue {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  }
+
+  &.scheme-green {
+    background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+  }
+
+  &.scheme-orange {
+    background: linear-gradient(135deg, #ff9a00 0%, #ffad32 100%);
+  }
+
+  &.scheme-red {
+    background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+  }
+
+  &.scheme-purple {
+    background: linear-gradient(135deg, #8e2de2 0%, #4a00e0 100%);
+  }
+
+  // Accessibility improvements
+  &:focus-visible {
+    outline: 2px solid #3498db;
+    outline-offset: 2px;
+  }
+
+  // Loading state
+  &.loading {
+    opacity: 0.6;
+
+    &::after {
+      content: '';
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      border: 2px solid transparent;
+      border-top: 2px solid white;
+      animation: avatar-spin 1s linear infinite;
+    }
+  }
 }
 
-.user-avatar:hover {
-  transform: scale(1.05);
-}
-
-.small {
-  width: 24px;
-  height: 24px;
-  font-size: 10px;
-}
-
-.medium {
-  width: 32px;
-  height: 32px;
-  font-size: 12px;
-}
-
-.large {
-  width: 48px;
-  height: 48px;
-  font-size: 16px;
-}
-
-.avatar-image {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.avatar-initials {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  height: 100%;
-  text-transform: uppercase;
+@keyframes avatar-spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }

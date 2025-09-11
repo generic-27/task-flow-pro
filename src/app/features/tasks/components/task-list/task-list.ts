@@ -1,8 +1,9 @@
-import { Component, computed, effect, inject, signal } from '@angular/core';
+import { Component, computed, effect, inject, OnInit, signal } from '@angular/core';
 import { Task, TaskPriority, TaskStatus } from '@app/core/models/task.model';
 import { TaskService } from '@app/core';
 import { LoadingSpinner } from '@app/shared';
 import { TaskItem } from '@features/tasks';
+import { Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-task-list',
@@ -10,7 +11,7 @@ import { TaskItem } from '@features/tasks';
   templateUrl: './task-list.html',
   styleUrl: './task-list.scss',
 })
-export class TaskList {
+export class TaskList implements OnInit {
   private taskService = inject(TaskService);
 
   // Signal state
@@ -19,6 +20,8 @@ export class TaskList {
   selectedStatus = signal<TaskStatus | ''>('');
   selectedPriority = signal<TaskPriority | ''>('');
   searchTerm = signal('');
+
+  private destroy$: Subject<void> = new Subject<void>();
 
   // Filter options
   readonly statusOptions = [
@@ -84,8 +87,7 @@ export class TaskList {
     return 'Create your first task to get started.';
   });
 
-  constructor() {
-    // Load tasks on component initialization
+  ngOnInit(): void {
     this.loadTasks();
 
     // Optional: Log changes for debugging
@@ -145,16 +147,20 @@ export class TaskList {
     }
   }
 
-  private async loadTasks(): Promise<void> {
-    try {
-      this.loading.set(true);
-      const tasks = await this.taskService.getTasks();
-      this.tasks.set(tasks);
-    } catch (error) {
-      console.error('Failed to load tasks:', error);
-      // In a real app, you'd handle this error appropriately
-    } finally {
-      this.loading.set(false);
-    }
+  private loadTasks() {
+    this.loading.set(true);
+    this.taskService
+      .getTasks()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (tasks) => {
+          this.tasks.set(tasks);
+          this.loading.set(false);
+        },
+        error: (error) => {
+          console.error('Failed to load tasks:', error);
+          this.loading.set(false);
+        },
+      });
   }
 }

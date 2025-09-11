@@ -1,0 +1,138 @@
+.header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 0 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+
+  .header-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    max-width: 1200px;
+    margin: 0 auto;
+    height: 64px;
+  }
+
+  .header-brand {
+    h1 {
+      margin: 0;
+      font-size: 24px;
+      font-weight: 700;
+      color: white;
+
+      .brand-icon {
+        margin-right: 8px;
+        font-size: 28px;
+      }
+    }
+  }
+
+  .header-nav {
+    display: flex;
+    gap: 24px;
+    align-items: center;
+
+    .nav-link {
+      color: rgba(255, 255, 255, 0.9);
+      text-decoration: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-weight: 500;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+
+      &:hover {
+        background: rgba(255, 255, 255, 0.1);
+        color: white;
+        text-decoration: none;
+      }
+
+      &.active {
+        background: rgba(255, 255, 255, 0.2);
+        color: white;
+        font-weight: 600;
+      }
+    }
+  }
+
+  .header-user {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    position: relative;
+
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+
+      @media (max-width: 768px) {
+        display: none;
+      }
+    }
+
+    .user-details {
+      display: flex;
+      flex-direction: column;
+
+      .user-name {
+        font-size: 14px;
+        font-weight: 600;
+      }
+
+      .user-role {
+        font-size: 12px;
+        opacity: 0.8;
+        text-transform: capitalize;
+      }
+    }
+
+    .user-menu-button {
+      background: rgba(255, 255, 255, 0.1);
+      border: none;
+      color: white;
+      padding: 8px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background-color 0.2s;
+      font-size: 16px;
+
+      &:hover {
+        background: rgba(255, 255, 255, 0.2);
+      }
+
+      &:focus {
+        outline: 2px solid rgba(255, 255, 255, 0.5);
+        outline-offset: 2px;
+      }
+    }
+  }
+
+  @media (max-width: 768px) {
+    padding: 0 16px;
+
+    .header-nav {
+      gap: 12px;
+
+      .nav-link {
+        padding: 6px 12px;
+        font-size: 14px;
+      }
+    }
+
+    .header-brand h1 {
+      font-size: 20px;
+    }
+  }
+
+  @media (max-width: 576px) {
+    .header-nav {
+      display: none; // Hide navigation on very small screens
+    }
+  }
+}
