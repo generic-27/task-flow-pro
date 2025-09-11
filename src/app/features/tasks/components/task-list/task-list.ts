@@ -1,9 +1,9 @@
-import { Component, computed, inject, OnInit, OnDestroy, signal } from '@angular/core';
+import { Component, computed, inject, OnDestroy, OnInit, signal } from '@angular/core';
 import { Task, TaskPriority, TaskStatus } from '@app/core/models/task.model';
 import { TaskService } from '@app/core';
 import { LoadingSpinner } from '@app/shared';
 import { TaskItem } from '@features/tasks';
-import { Subject, takeUntil, finalize } from 'rxjs';
+import { finalize, Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-task-list',
@@ -20,6 +20,10 @@ export class TaskList implements OnInit, OnDestroy {
   selectedStatus = signal<TaskStatus | ''>('');
   selectedPriority = signal<TaskPriority | ''>('');
   searchTerm = signal('');
+
+  // Loading states for individual operations
+  updatingTaskId = signal<string | null>(null);
+  deletingTaskId = signal<string | null>(null);
 
   private destroy$ = new Subject<void>();
 
@@ -38,21 +42,18 @@ export class TaskList implements OnInit, OnDestroy {
     { value: TaskPriority.URGENT, label: 'Urgent' },
   ];
 
-  // Computed signals
+  // Computed signals for derived state
   filteredTasks = computed(() => {
     let filtered = this.tasks();
 
-    // Filter by status
     if (this.selectedStatus()) {
       filtered = filtered.filter((task) => task.status === this.selectedStatus());
     }
 
-    // Filter by priority
     if (this.selectedPriority()) {
       filtered = filtered.filter((task) => task.priority === this.selectedPriority());
     }
 
-    // Filter by search term
     if (this.searchTerm()) {
       const term = this.searchTerm().toLowerCase();
       filtered = filtered.filter(
@@ -89,12 +90,6 @@ export class TaskList implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.loadTasks();
-
-    // this.loading.set(true);
-    // setTimeout(() => {
-    //   console.log('Manual timeout - setting loading to false');
-    //   this.loading.set(false);
-    // }, 5000);
   }
 
   ngOnDestroy(): void {
@@ -118,63 +113,147 @@ export class TaskList implements OnInit, OnDestroy {
     this.searchTerm.set(input.value);
   }
 
-  async onTaskStatusChange(event: { taskId: string; status: TaskStatus }): Promise<void> {
-    try {
-      await this.taskService.updateTaskStatus(event.taskId, event.status);
+  onTaskStatusChange(event: { taskId: string; status: TaskStatus }): void {
+    this.updatingTaskId.set(event.taskId);
 
-      // Update local state
-      this.tasks.update((tasks) =>
-        tasks.map((task) =>
-          task.id === event.taskId
-            ? { ...task, status: event.status, updatedAt: new Date() }
-            : task,
-        ),
-      );
-    } catch (error) {
-      console.error('Failed to update task status:', error);
-      // In a real app, you'd show an error message
-    }
+    this.taskService
+      .updateTaskStatus(event.taskId, event.status)
+      .pipe(
+        takeUntil(this.destroy$),
+        finalize(() => this.updatingTaskId.set(null)),
+      )
+      .subscribe({
+        next: () => {
+          // Update local state on success
+          this.tasks.update((tasks) =>
+            tasks.map((task) =>
+              task.id === event.taskId
+                ? { ...task, status: event.status, updatedAt: new Date() }
+                : task,
+            ),
+          );
+        },
+        error: (error) => {
+          console.error('Failed to update task status:', error);
+          // In a real app, you'd show an error notification
+          // Could revert the UI change here if needed
+        },
+      });
   }
 
   onEditTask(taskId: string): void {
     console.log('Edit task:', taskId);
     // In a real app, this would open an edit dialog
+    // You could use the taskService.getTaskById(taskId) to fetch details
   }
 
-  async onDeleteTask(taskId: string): Promise<void> {
-    try {
-      await this.taskService.deleteTask(taskId);
-
-      // Update local state
-      this.tasks.update((tasks) => tasks.filter((task) => task.id !== taskId));
-    } catch (error) {
-      console.error('Failed to delete task:', error);
-      // In a real app, you'd show an error message
+  onDeleteTask(taskId: string): void {
+    if (!confirm('Are you sure you want to delete this task?')) {
+      return;
     }
+
+    this.deletingTaskId.set(taskId);
+
+    this.taskService
+      .deleteTask(taskId)
+      .pipe(
+        takeUntil(this.destroy$),
+        finalize(() => this.deletingTaskId.set(null)),
+      )
+      .subscribe({
+        next: () => {
+          // Update local state on success
+          this.tasks.update((tasks) => tasks.filter((task) => task.id !== taskId));
+        },
+        error: (error) => {
+          console.error('Failed to delete task:', error);
+          // In a real app, you'd show an error notification
+        },
+      });
+  }
+
+  // Additional methods leveraging the new Observable API
+  refreshTasks(): void {
+    this.loadTasks();
+  }
+
+  loadTasksByStatus(status: TaskStatus): void {
+    this.loading.set(true);
+
+    this.taskService
+      .getTasksByStatus(status)
+      .pipe(
+        takeUntil(this.destroy$),
+        finalize(() => this.loading.set(false)),
+      )
+      .subscribe({
+        next: (tasks) => {
+          this.tasks.set(tasks);
+          this.selectedStatus.set(status);
+        },
+        error: (error) => {
+          console.error('Failed to load tasks by status:', error);
+        },
+      });
+  }
+
+  loadTasksByPriority(priority: TaskPriority): void {
+    this.loading.set(true);
+
+    this.taskService
+      .getTasksByPriority(priority)
+      .pipe(
+        takeUntil(this.destroy$),
+        finalize(() => this.loading.set(false)),
+      )
+      .subscribe({
+        next: (tasks) => {
+          this.tasks.set(tasks);
+          this.selectedPriority.set(priority);
+        },
+        error: (error) => {
+          console.error('Failed to load tasks by priority:', error);
+        },
+      });
+  }
+
+  searchTasks(searchTerm: string): void {
+    if (!searchTerm.trim()) {
+      this.loadTasks();
+      return;
+    }
+
+    this.loading.set(true);
+
+    this.taskService
+      .searchTasks(searchTerm)
+      .pipe(
+        takeUntil(this.destroy$),
+        finalize(() => this.loading.set(false)),
+      )
+      .subscribe({
+        next: (tasks) => {
+          this.tasks.set(tasks);
+          this.searchTerm.set(searchTerm);
+        },
+        error: (error) => {
+          console.error('Failed to search tasks:', error);
+        },
+      });
   }
 
   private loadTasks(): void {
-    console.log('Starting to load tasks...');
     this.loading.set(true);
 
     this.taskService
       .getTasks()
       .pipe(
         takeUntil(this.destroy$),
-        finalize(() => {
-          console.log('Task loading finished');
-          this.loading.set(false);
-        }),
+        finalize(() => this.loading.set(false)),
       )
       .subscribe({
-        next: (tasks) => {
-          console.log('Tasks received:', tasks.length);
-          this.tasks.set(tasks);
-        },
-        error: (error) => {
-          console.error('Failed to load tasks:', error);
-          // Loading state will be set to false in finalize
-        },
+        next: (tasks) => this.tasks.set(tasks),
+        error: (error) => console.error('Failed to load tasks:', error),
       });
   }
 }

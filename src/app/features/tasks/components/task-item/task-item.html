@@ -2,6 +2,7 @@
   class="task-item"
   [class.completed]="task().status === taskStatus.DONE"
   [attr.data-priority]="task().priority"
+  [attr.data-status]="task().status"
 >
   <div class="task-header">
     <div class="task-title">
