@@ -1,9 +1,9 @@
-import { Component, computed, effect, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, inject, OnInit, OnDestroy, signal } from '@angular/core';
 import { Task, TaskPriority, TaskStatus } from '@app/core/models/task.model';
 import { TaskService } from '@app/core';
 import { LoadingSpinner } from '@app/shared';
 import { TaskItem } from '@features/tasks';
-import { Subject, takeUntil } from 'rxjs';
+import { Subject, takeUntil, finalize } from 'rxjs';
 
 @Component({
   selector: 'app-task-list',
@@ -11,7 +11,7 @@ import { Subject, takeUntil } from 'rxjs';
   templateUrl: './task-list.html',
   styleUrl: './task-list.scss',
 })
-export class TaskList implements OnInit {
+export class TaskList implements OnInit, OnDestroy {
   private taskService = inject(TaskService);
 
   // Signal state
@@ -21,7 +21,7 @@ export class TaskList implements OnInit {
   selectedPriority = signal<TaskPriority | ''>('');
   searchTerm = signal('');
 
-  private destroy$: Subject<void> = new Subject<void>();
+  private destroy$ = new Subject<void>();
 
   // Filter options
   readonly statusOptions = [
@@ -90,10 +90,16 @@ export class TaskList implements OnInit {
   ngOnInit(): void {
     this.loadTasks();
 
-    // Optional: Log changes for debugging
-    effect(() => {
-      console.log('Filtered tasks count:', this.filteredTasks().length);
-    });
+    // this.loading.set(true);
+    // setTimeout(() => {
+    //   console.log('Manual timeout - setting loading to false');
+    //   this.loading.set(false);
+    // }, 5000);
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   // Event handlers
@@ -147,19 +153,27 @@ export class TaskList implements OnInit {
     }
   }
 
-  private loadTasks() {
+  private loadTasks(): void {
+    console.log('Starting to load tasks...');
     this.loading.set(true);
+
     this.taskService
       .getTasks()
-      .pipe(takeUntil(this.destroy$))
+      .pipe(
+        takeUntil(this.destroy$),
+        finalize(() => {
+          console.log('Task loading finished');
+          this.loading.set(false);
+        }),
+      )
       .subscribe({
         next: (tasks) => {
+          console.log('Tasks received:', tasks.length);
           this.tasks.set(tasks);
-          this.loading.set(false);
         },
         error: (error) => {
           console.error('Failed to load tasks:', error);
-          this.loading.set(false);
+          // Loading state will be set to false in finalize
         },
       });
   }
