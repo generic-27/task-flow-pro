@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms'; // ← Add FormsModule for ngModel
 import { Task, TaskPriority, TaskStatus } from '@core/models/task.model';
 import { UserAvatar } from '@shared/components/user-avatar/user-avatar';
+import { PRIORITY_OPTIONS, STATUS_OPTIONS } from '@app/core';
 
 @Component({
   selector: 'app-task-item',
@@ -40,12 +41,7 @@ export class TaskItem {
   // Constants
   readonly taskStatus = TaskStatus;
 
-  readonly statusOptions = [
-    { value: TaskStatus.TODO, label: 'To Do' },
-    { value: TaskStatus.IN_PROGRESS, label: 'In Progress' },
-    { value: TaskStatus.IN_REVIEW, label: 'In Review' },
-    { value: TaskStatus.DONE, label: 'Done' },
-  ];
+  readonly statusOptions = STATUS_OPTIONS;
 
   // ✅ FIXED: Handle ngModelChange instead of change event
   onStatusChange(newStatus: TaskStatus): void {
@@ -61,19 +57,8 @@ export class TaskItem {
     this.delete.emit(this.task().id);
   }
 
-  getPriorityLabel(priority: TaskPriority): string {
-    switch (priority) {
-      case TaskPriority.LOW:
-        return 'Low';
-      case TaskPriority.MEDIUM:
-        return 'Med';
-      case TaskPriority.HIGH:
-        return 'High';
-      case TaskPriority.URGENT:
-        return 'Urgent';
-      default:
-        return '';
-    }
+  getPriorityLabel(taskPriority: TaskPriority): string {
+    return PRIORITY_OPTIONS.find((opt) => opt.taskPriority === taskPriority)?.label ?? '';
   }
 
   private formatDate(date: Date): string {

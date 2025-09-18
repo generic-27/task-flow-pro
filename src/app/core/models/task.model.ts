@@ -35,6 +35,16 @@ export interface Project {
   updatedAt: Date;
 }
 
+export interface StatusOptionData {
+  taskStatus: TaskStatus;
+  label: string;
+}
+
+export interface PriorityOptionData {
+  taskPriority: TaskPriority;
+  label: string;
+}
+
 export enum TaskStatus {
   TODO = 'todo',
   IN_PROGRESS = 'in-progress',

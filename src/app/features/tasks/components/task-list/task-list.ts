@@ -1,6 +1,12 @@
 import { Component, computed, inject, OnDestroy, OnInit, signal } from '@angular/core';
-import { Task, TaskPriority, TaskStatus } from '@app/core/models/task.model';
-import { TaskService } from '@app/core';
+import {
+  PriorityOptionData,
+  StatusOptionData,
+  Task,
+  TaskPriority,
+  TaskStatus,
+} from '@app/core/models/task.model';
+import { PRIORITY_OPTIONS, STATUS_OPTIONS, TaskService } from '@app/core';
 import { LoadingSpinner } from '@app/shared';
 import { TaskItem } from '@features/tasks';
 import { finalize, Subject, takeUntil } from 'rxjs';
@@ -28,19 +34,8 @@ export class TaskList implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
 
   // Filter options
-  readonly statusOptions = [
-    { value: TaskStatus.TODO, label: 'To Do' },
-    { value: TaskStatus.IN_PROGRESS, label: 'In Progress' },
-    { value: TaskStatus.IN_REVIEW, label: 'In Review' },
-    { value: TaskStatus.DONE, label: 'Done' },
-  ];
-
-  readonly priorityOptions = [
-    { value: TaskPriority.LOW, label: 'Low' },
-    { value: TaskPriority.MEDIUM, label: 'Medium' },
-    { value: TaskPriority.HIGH, label: 'High' },
-    { value: TaskPriority.URGENT, label: 'Urgent' },
-  ];
+  readonly statusOptions: StatusOptionData[] = STATUS_OPTIONS;
+  readonly priorityOptions: PriorityOptionData[] = PRIORITY_OPTIONS;
 
   // Computed signals for derived state
   filteredTasks = computed(() => {
