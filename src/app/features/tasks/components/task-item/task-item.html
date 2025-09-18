@@ -54,8 +54,8 @@
         class="status-select"
         [attr.aria-label]="'Change status for task: ' + task().title"
       >
-        @for (status of statusOptions; track status.value) {
-          <option [value]="status.value">{{ status.label }}</option>
+        @for (status of statusOptions; track status.taskStatus) {
+          <option [value]="status.taskStatus">{{ status.label }}</option>
         }
       </select>
     </div>
