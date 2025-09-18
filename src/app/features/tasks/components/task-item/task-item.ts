@@ -23,7 +23,10 @@ export class TaskItem {
   delete = output<string>();
 
   // Computed signals for safe data access
-  assignee = computed(() => this.task().assignee || null);
+  assignee = computed(() => {
+    const task = this.task();
+    return task.assignee ?? null;
+  });
 
   // Computed signal for formatted due date
   formattedDueDate = computed(() => {
