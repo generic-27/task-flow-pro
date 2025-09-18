@@ -1,10 +1,4 @@
-export interface User {
-  id: string;
-  name: string;
-  email: string;
-  avatar?: string;
-  role: UserRole;
-}
+import { User } from '@app/core';
 
 export interface Task {
   id: string;
@@ -59,14 +53,6 @@ export enum TaskPriority {
   URGENT = 'urgent',
 }
 
-export enum UserRole {
-  ADMIN = 'admin',
-  PROJECT_MANAGER = 'project-manager',
-  DEVELOPER = 'developer',
-  VIEWER = 'viewer',
-}
-
 // Helper types
 export type TaskStatusType = keyof typeof TaskStatus;
 export type TaskPriorityType = keyof typeof TaskPriority;
-export type UserRoleType = keyof typeof UserRole;

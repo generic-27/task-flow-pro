@@ -1,268 +1,126 @@
-import { Task, TaskPriority, TaskStatus, User, UserRole } from '../models/task.model';
+// src/app/core/services/task.service.ts (Updated for NgRx)
 import { Injectable } from '@angular/core';
-import { delay, Observable, of, throwError } from 'rxjs';
+import { Observable, of, delay, throwError } from 'rxjs';
+import { Task, TaskStatus, TaskPriority } from '@core/models/task.model';
+import { User } from '@core/models/user.model';
 
 @Injectable({
   providedIn: 'root',
 })
 export class TaskService {
-  getTasks(): Observable<Task[]> {
-    // Simulate API delay for realistic loading experience
-    return of(this.generateMockTasks()).pipe(delay(2000));
+  private mockTasks: Task[] = [];
+
+  constructor() {
+    this.initializeMockData();
   }
 
-  updateTaskStatus(taskId: string, status: TaskStatus): Observable<void> {
-    console.log(taskId, status);
-    // Simulate API call with some delay
-    return of(void 0).pipe(
-      delay(500), // Realistic API response time
+  // Get all tasks
+  getTasks(): Observable<Task[]> {
+    console.log('🔄 TaskService.getTasks() called');
+    return of([...this.mockTasks]).pipe(
+      delay(800), // Simulate network delay
     );
   }
 
-  deleteTask(taskId: string): Observable<void> {
-    console.log(taskId);
-    // Simulate API call with shorter delay for delete
-    return of(void 0).pipe(delay(300));
+  // Get task by ID
+  getTaskById(id: string): Observable<Task | undefined> {
+    const task = this.mockTasks.find((t) => t.id === id);
+    return of(task).pipe(delay(300));
   }
 
-  createTask(task: Omit<Task, 'id' | 'createdAt' | 'updatedAt'>): Observable<Task> {
+  // Create new task
+  createTask(taskData: Omit<Task, 'id' | 'createdAt' | 'updatedAt'>): Observable<Task> {
     const newTask: Task = {
-      ...task,
-      id: this.generateTaskId(),
+      ...taskData,
+      id: `task-${Date.now()}`, // Simple ID generation
       createdAt: new Date(),
       updatedAt: new Date(),
     };
 
-    return of(newTask).pipe(
-      delay(800), // Simulate API creation time
-    );
+    this.mockTasks.push(newTask);
+    console.log('✅ Task created:', newTask);
+
+    return of(newTask).pipe(delay(500));
   }
 
-  updateTask(taskId: string, updates: Partial<Task>): Observable<Task> {
-    // Find the existing task (in a real app, this would be an API call)
-    const existingTasks = this.generateMockTasks();
-    const existingTask = existingTasks.find((t) => t.id === taskId);
+  // Update task status - returns the updated task
+  updateTaskStatus(taskId: string, status: TaskStatus): Observable<Task> {
+    const taskIndex = this.mockTasks.findIndex((t) => t.id === taskId);
 
-    if (!existingTask) {
+    if (taskIndex === -1) {
       return throwError(() => new Error(`Task with ID ${taskId} not found`));
     }
 
+    // Update the task
     const updatedTask: Task = {
-      ...existingTask,
-      ...updates,
+      ...this.mockTasks[taskIndex],
+      status,
       updatedAt: new Date(),
     };
 
-    return of(updatedTask).pipe(delay(600));
+    this.mockTasks[taskIndex] = updatedTask;
+    console.log(`✅ Task status updated: ${taskId} -> ${status}`);
+
+    return of(updatedTask).pipe(delay(300));
   }
 
-  getTaskById(taskId: string): Observable<Task> {
-    console.log(`TaskService: Fetching task ${taskId}`);
+  // Update task - returns the updated task
+  updateTask(taskId: string, changes: Partial<Task>): Observable<Task> {
+    const taskIndex = this.mockTasks.findIndex((t) => t.id === taskId);
 
-    const tasks = this.generateMockTasks();
-    const task = tasks.find((t) => t.id === taskId);
-
-    if (!task) {
+    if (taskIndex === -1) {
       return throwError(() => new Error(`Task with ID ${taskId} not found`));
     }
 
-    return of(task).pipe(delay(400));
+    // Update the task
+    const updatedTask: Task = {
+      ...this.mockTasks[taskIndex],
+      ...changes,
+      updatedAt: new Date(),
+    };
+
+    this.mockTasks[taskIndex] = updatedTask;
+    console.log('✅ Task updated:', updatedTask);
+
+    return of(updatedTask).pipe(delay(400));
   }
 
-  getTasksByStatus(status: TaskStatus): Observable<Task[]> {
-    console.log(`TaskService: Fetching tasks with status: ${status}`);
+  // Delete task
+  deleteTask(taskId: string): Observable<void> {
+    const taskIndex = this.mockTasks.findIndex((t) => t.id === taskId);
 
-    const tasks = this.generateMockTasks();
-    const filteredTasks = tasks.filter((t) => t.status === status);
-
-    return of(filteredTasks).pipe(delay(600));
-  }
-
-  getTasksByPriority(priority: TaskPriority): Observable<Task[]> {
-    console.log(`TaskService: Fetching tasks with priority: ${priority}`);
-
-    const tasks = this.generateMockTasks();
-    const filteredTasks = tasks.filter((t) => t.priority === priority);
-
-    return of(filteredTasks).pipe(delay(600));
-  }
-
-  getTasksByAssignee(assigneeId: string): Observable<Task[]> {
-    console.log(`TaskService: Fetching tasks for assignee: ${assigneeId}`);
-
-    const tasks = this.generateMockTasks();
-    const filteredTasks = tasks.filter((t) => t.assigneeId === assigneeId);
-
-    return of(filteredTasks).pipe(delay(600));
-  }
-
-  searchTasks(searchTerm: string): Observable<Task[]> {
-    console.log(`TaskService: Searching tasks for: "${searchTerm}"`);
-
-    if (!searchTerm.trim()) {
-      return this.getTasks();
+    if (taskIndex === -1) {
+      return throwError(() => new Error(`Task with ID ${taskId} not found`));
     }
 
-    const tasks = this.generateMockTasks();
-    const searchLower = searchTerm.toLowerCase();
+    this.mockTasks.splice(taskIndex, 1);
+    console.log(`✅ Task deleted: ${taskId}`);
 
-    const filteredTasks = tasks.filter(
-      (task) =>
-        task.title.toLowerCase().includes(searchLower) ||
-        task.description?.toLowerCase().includes(searchLower) ||
-        task.tags.some((tag) => tag.toLowerCase().includes(searchLower)),
-    );
-
-    return of(filteredTasks).pipe(delay(400));
+    return of(void 0).pipe(delay(300));
   }
 
-  private generateTaskId(): string {
-    return 'task-' + Math.random().toString(36).substr(2, 9);
-  }
-
-  // private generateMockTasks(): Task[] {
-  //   console.log('TaskService: Generating mock tasks...');
-  //
-  //   const mockUsers: User[] = [
-  //     {
-  //       id: '1',
-  //       name: 'John Doe',
-  //       email: 'john@example.com',
-  //       role: UserRole.DEVELOPER,
-  //     },
-  //     {
-  //       id: '2',
-  //       name: 'Jane Smith',
-  //       email: 'jane@example.com',
-  //       role: UserRole.DEVELOPER,
-  //     },
-  //   ];
-  //
-  //   const tasks = [
-  //     {
-  //       id: 'task-001',
-  //       title: 'Implement user authentication',
-  //       description: 'Set up JWT-based authentication system with login and registration',
-  //       status: TaskStatus.IN_PROGRESS,
-  //       priority: TaskPriority.HIGH,
-  //       assigneeId: '1',
-  //       assignee: mockUsers[0],
-  //       projectId: 'project-1',
-  //       createdAt: new Date('2024-01-15'),
-  //       updatedAt: new Date('2024-01-20'),
-  //       dueDate: new Date('2024-02-01'),
-  //       tags: ['authentication', 'security', 'backend'],
-  //       estimatedHours: 16,
-  //       actualHours: 12,
-  //     },
-  //     {
-  //       id: 'task-002',
-  //       title: 'Design task board component',
-  //       description: 'Create responsive kanban board with drag & drop functionality',
-  //       status: TaskStatus.TODO,
-  //       priority: TaskPriority.MEDIUM,
-  //       assigneeId: '2',
-  //       assignee: mockUsers[1],
-  //       projectId: 'project-1',
-  //       createdAt: new Date('2024-01-16'),
-  //       updatedAt: new Date('2024-01-16'),
-  //       dueDate: new Date('2024-01-30'),
-  //       tags: ['ui', 'frontend', 'angular'],
-  //       estimatedHours: 8,
-  //     },
-  //     {
-  //       id: 'task-003',
-  //       title: 'Set up CI/CD pipeline',
-  //       description: 'Configure GitHub Actions for automated testing and deployment',
-  //       status: TaskStatus.DONE,
-  //       priority: TaskPriority.LOW,
-  //       assigneeId: '1',
-  //       assignee: mockUsers[0],
-  //       projectId: 'project-1',
-  //       createdAt: new Date('2024-01-10'),
-  //       updatedAt: new Date('2024-01-18'),
-  //       dueDate: new Date('2024-01-25'),
-  //       tags: ['devops', 'automation'],
-  //       estimatedHours: 6,
-  //       actualHours: 8,
-  //     },
-  //     {
-  //       id: 'task-004',
-  //       title: 'Database schema optimization',
-  //       description: 'Optimize database queries and add proper indexing',
-  //       status: TaskStatus.IN_REVIEW,
-  //       priority: TaskPriority.URGENT,
-  //       assignee: null,
-  //       projectId: 'project-1',
-  //       createdAt: new Date('2024-01-18'),
-  //       updatedAt: new Date('2024-01-19'),
-  //       dueDate: new Date('2024-01-22'),
-  //       tags: ['database', 'performance'],
-  //       estimatedHours: 12,
-  //     },
-  //     {
-  //       id: 'task-005',
-  //       title: 'Mobile responsive design',
-  //       description: 'Ensure all components work well on mobile devices',
-  //       status: TaskStatus.TODO,
-  //       priority: TaskPriority.MEDIUM,
-  //       assigneeId: '2',
-  //       assignee: mockUsers[1],
-  //       projectId: 'project-1',
-  //       createdAt: new Date('2024-01-19'),
-  //       updatedAt: new Date('2024-01-19'),
-  //       dueDate: new Date('2024-02-05'),
-  //       tags: ['mobile', 'responsive', 'css'],
-  //       estimatedHours: 10,
-  //     },
-  //     {
-  //       id: 'task-006',
-  //       title: 'Security vulnerability assessment',
-  //       description: 'Conduct thorough security audit and fix vulnerabilities',
-  //       status: TaskStatus.TODO,
-  //       priority: TaskPriority.URGENT,
-  //       assigneeId: '1',
-  //       assignee: mockUsers[0],
-  //       projectId: 'project-1',
-  //       createdAt: new Date('2024-01-20'),
-  //       updatedAt: new Date('2024-01-20'),
-  //       dueDate: new Date('2024-01-28'),
-  //       tags: ['security', 'audit', 'urgent'],
-  //       estimatedHours: 20,
-  //     },
-  //   ];
-  //
-  //   console.log('TaskService: Generated', tasks.length, 'mock tasks');
-  //   return tasks;
-  // }
-
-  // Add this enhanced debugging to your TaskService.generateMockTasks():
-
-  private generateMockTasks(): Task[] {
-    console.log('🔧 TaskService: Generating mock tasks...');
-    console.log('🔧 TaskStatus enum values:', TaskStatus);
-
+  private initializeMockData(): void {
     const mockUsers: User[] = [
       {
         id: '1',
         name: 'John Doe',
         email: 'john@example.com',
-        role: UserRole.DEVELOPER,
+        avatar: 'https://i.pravatar.cc/40?img=1',
       },
       {
         id: '2',
         name: 'Jane Smith',
         email: 'jane@example.com',
-        role: UserRole.DEVELOPER,
+        avatar: 'https://i.pravatar.cc/40?img=2',
       },
     ];
 
-    const tasks = [
+    this.mockTasks = [
       {
         id: 'task-001',
         title: 'Implement user authentication',
-        description: 'Set up JWT-based authentication system with login and registration',
-        status: TaskStatus.IN_PROGRESS, // Should be 'in-progress'
+        description: 'Set up JWT-based auth with login and registration',
+        status: TaskStatus.IN_PROGRESS,
         priority: TaskPriority.HIGH,
         assigneeId: '1',
         assignee: mockUsers[0],
@@ -278,7 +136,7 @@ export class TaskService {
         id: 'task-002',
         title: 'Design task board component',
         description: 'Create responsive kanban board with drag & drop functionality',
-        status: TaskStatus.TODO, // Should be 'todo'
+        status: TaskStatus.TODO,
         priority: TaskPriority.MEDIUM,
         assigneeId: '2',
         assignee: mockUsers[1],
@@ -293,7 +151,7 @@ export class TaskService {
         id: 'task-003',
         title: 'Set up CI/CD pipeline',
         description: 'Configure GitHub Actions for automated testing and deployment',
-        status: TaskStatus.DONE, // Should be 'done'
+        status: TaskStatus.DONE,
         priority: TaskPriority.LOW,
         assigneeId: '1',
         assignee: mockUsers[0],
@@ -309,8 +167,9 @@ export class TaskService {
         id: 'task-004',
         title: 'Database schema optimization',
         description: 'Optimize database queries and add proper indexing',
-        status: TaskStatus.IN_REVIEW, // Should be 'in-review'
+        status: TaskStatus.IN_REVIEW,
         priority: TaskPriority.URGENT,
+        assigneeId: '',
         assignee: null,
         projectId: 'project-1',
         createdAt: new Date('2024-01-18'),
@@ -319,28 +178,38 @@ export class TaskService {
         tags: ['database', 'performance'],
         estimatedHours: 12,
       },
+      {
+        id: 'task-005',
+        title: 'Mobile responsive design',
+        description: 'Ensure the application works perfectly on mobile devices',
+        status: TaskStatus.TODO,
+        priority: TaskPriority.MEDIUM,
+        assigneeId: '2',
+        assignee: mockUsers[1],
+        projectId: 'project-1',
+        createdAt: new Date('2024-01-20'),
+        updatedAt: new Date('2024-01-20'),
+        dueDate: new Date('2024-02-15'),
+        tags: ['mobile', 'responsive', 'css'],
+        estimatedHours: 10,
+      },
+      {
+        id: 'task-006',
+        title: 'Performance optimization',
+        description: 'Optimize bundle size and improve loading times',
+        status: TaskStatus.TODO,
+        priority: TaskPriority.HIGH,
+        assigneeId: '1',
+        assignee: mockUsers[0],
+        projectId: 'project-1',
+        createdAt: new Date('2024-01-21'),
+        updatedAt: new Date('2024-01-21'),
+        dueDate: new Date('2024-02-10'),
+        tags: ['performance', 'optimization', 'webpack'],
+        estimatedHours: 14,
+      },
     ];
 
-    // 🔍 ENHANCED DEBUG: Log detailed task information
-    console.log('📊 Generated tasks with detailed status info:');
-    tasks.forEach((task, index) => {
-      console.log(`${index + 1}. "${task.title}"`);
-      console.log(`   Status: "${task.status}" (type: ${typeof task.status})`);
-      console.log(`   Priority: "${task.priority}" (type: ${typeof task.priority})`);
-      console.log(`   Status === TaskStatus.TODO: ${task.status === TaskStatus.TODO}`);
-      console.log(
-        `   Status === TaskStatus.IN_PROGRESS: ${task.status === TaskStatus.IN_PROGRESS}`,
-      );
-      console.log(`   Status === TaskStatus.IN_REVIEW: ${task.status === TaskStatus.IN_REVIEW}`);
-      console.log(`   Status === TaskStatus.DONE: ${task.status === TaskStatus.DONE}`);
-      console.log('   ---');
-    });
-
-    console.log('🔧 TaskStatus.TODO value:', TaskStatus.TODO);
-    console.log('🔧 TaskStatus.IN_PROGRESS value:', TaskStatus.IN_PROGRESS);
-    console.log('🔧 TaskStatus.IN_REVIEW value:', TaskStatus.IN_REVIEW);
-    console.log('🔧 TaskStatus.DONE value:', TaskStatus.DONE);
-
-    return tasks;
+    console.log('📊 Mock tasks initialized:', this.mockTasks.length);
   }
 }
